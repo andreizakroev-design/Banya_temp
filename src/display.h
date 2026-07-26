@@ -1,17 +1,1 @@
-#ifndef DISPLAY_H
-#define DISPLAY_H
-
-#include "config.h"
-#include "sensors.h"
-
-void display_init();
-void display_update();
-void display_show_main_screen();
-void display_show_temp_rate_screen();
-void display_show_graph_screen();
-void display_show_error_log_screen();
-void display_show_menu_ventilator_time();
-void display_show_menu_humidity();
-void display_show_menu_wifi_info();
-
-#endif // DISPLAY_H
+#ifndef DISPLAY_H\n#define DISPLAY_H\n\n#include \"config.h\"\n#include \"sensors.h\"\n\nvoid display_init();\nvoid display_update();\nvoid display_show_main_screen();\nvoid display_next_screen();\nvoid display_enter_menu();\nvoid display_exit_menu();\nbool display_is_in_menu();\nuint8_t display_get_menu_item();\nuint8_t display_get_current_screen();\n\n#endif // DISPLAY_H\n
