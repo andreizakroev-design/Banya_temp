@@ -7,66 +7,61 @@
 #include "wifi.h"
 #include "settings.h"
 #include "errors.h"
+#include "utils.h"
 
 // Global variables
-sensors_data_t sensor_data;
-system_state_t system_state;
+static unsigned long last_debug_time = 0;
 
 void setup() {
   Serial.begin(115200);
   delay(1000);
   
-  Serial.println("\n\nBanya Controller v1.0 starting...");
+  Serial.println("\n\n=================================");
+  Serial.println("Banya Microclimate Controller v1.0");
+  Serial.println("=================================");
+  Serial.println();
   
-  // Initialize settings from EEPROM
-  settings_init();
+  // Initialize subsystems
+  Serial.println("[INIT] Initializing subsystems...");
   
-  // Initialize sensors
-  sensors_init();
+  settings_init();    // Load settings from EEPROM
+  sensors_init();     // Initialize sensors (I2C, OneWire)
+  display_init();     // Initialize display
+  buttons_init();     // Initialize buttons
+  ventilator_init();  // Initialize ventilator relay
+  wifi_init();        // Initialize Wi-Fi and web server
+  errors_init();      // Initialize error logger
   
-  // Initialize display
-  display_init();
+  Serial.println("\n[INIT] All subsystems initialized successfully!");
+  Serial.println("[INIT] Ready to operate.\n");
   
-  // Initialize buttons
-  buttons_init();
-  
-  // Initialize ventilator
-  ventilator_init();
-  
-  // Initialize Wi-Fi
-  wifi_init();
-  
-  // Initialize error log
-  errors_init();
-  
-  // Initialize system state
-  system_state.screen = 0;
-  system_state.menu_mode = false;
-  system_state.menu_item = 0;
-  system_state.ventilator_running = false;
-  system_state.ventilator_end_time = 0;
-  
-  Serial.println("Banya Controller initialized successfully!");
   display_show_main_screen();
 }
 
 void loop() {
-  // Read sensors
+  unsigned long now = millis();
+  
+  // Read sensors (every 1 second inside sensors_read)
   sensors_read();
   
-  // Handle buttons
+  // Update button states
   buttons_update();
   
   // Update ventilator logic
   ventilator_update();
   
+  // Update Wi-Fi state
+  wifi_update();
+  
+  // Update settings (delayed save)
+  settings_update();
+  
   // Update display
   display_update();
   
   // Debug output every 10 seconds
-  static unsigned long last_debug = 0;
-  if (millis() - last_debug > 10000) {
-    last_debug = millis();
+  if (now - last_debug_time > 10000) {
+    last_debug_time = now;
     debug_print_sensors();
   }
   
