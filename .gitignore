@@ -1,0 +1,23 @@
+# PlatformIO
+.pio/
+.vscode/
+.DS_Store
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Arduino
+build/
+dist/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
