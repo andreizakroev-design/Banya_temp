@@ -5,24 +5,19 @@
 #include "ventilator.h"
 #include "settings.h"
 
-// Button state structures
-struct {
+// Define button struct type
+typedef struct {
     uint8_t pin;
     uint16_t debounce_time;
     bool last_state;
     unsigned long press_start_time;
     bool long_press_detected;
     button_event_t current_event;
-} mode_button = {MODE_PIN, DEBOUNCE_TIME, HIGH, 0, false, BUTTON_NONE};
+} button_t;
 
-struct {
-    uint8_t pin;
-    uint16_t debounce_time;
-    bool last_state;
-    unsigned long press_start_time;
-    bool long_press_detected;
-    button_event_t current_event;
-} start_button = {START_PIN, DEBOUNCE_TIME, HIGH, 0, false, BUTTON_NONE};
+// Button state structures
+button_t mode_button = {MODE_PIN, DEBOUNCE_TIME, HIGH, 0, false, BUTTON_NONE};
+button_t start_button = {START_PIN, DEBOUNCE_TIME, HIGH, 0, false, BUTTON_NONE};
 
 // Initialize buttons
 void buttons_init() {
@@ -33,14 +28,7 @@ void buttons_init() {
 }
 
 // Helper function to process button
-static void process_button(struct {
-    uint8_t pin;
-    uint16_t debounce_time;
-    bool last_state;
-    unsigned long press_start_time;
-    bool long_press_detected;
-    button_event_t current_event;
-} *btn) {
+static void process_button(button_t *btn) {
     bool current_state = digitalRead(btn->pin);
     unsigned long now = millis();
     
